@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CityCare Hospital - Appointment System</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #263238;
+        }
+
+        .navbar {
+            background: #0d47a1;
+            color: white;
+            padding: 18px 40px;
+        }
+
+        .hospital-name {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            margin-top: 5px;
+            font-size: 13px;
+        }
+
+        .container {
+            width: 94%;
+            max-width: 1500px;
+            margin: 30px auto;
+        }
+
+        .page-title {
+            margin-bottom: 20px;
+        }
+
+        .page-title h1 {
+            color: #0d47a1;
+            font-size: 28px;
+        }
+
+        .page-title p {
+            margin-top: 7px;
+            color: #607d8b;
+        }
+
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-header {
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            color: #0d47a1;
+            font-size: 21px;
+        }
+
+        .section-header p {
+            margin-top: 6px;
+            color: #607d8b;
+            font-size: 13px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1100px;
+        }
+
+        th {
+            background: #e3f2fd;
+            color: #0d47a1;
+            padding: 13px;
+            text-align: left;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 13px;
+            border-bottom: 1px solid #eceff1;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        tbody tr:hover {
+            background: #f8fbff;
+        }
+
+        .patient-id {
+            font-weight: bold;
+            color: #0d47a1;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .confirmed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .actions {
+            display: flex;
+            gap: 7px;
+        }
+
+        button {
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .confirm-btn {
+            background: #2e7d32;
+            color: white;
+        }
+
+        .cancel-btn {
+            background: #c62828;
+            color: white;
+        }
+
+        button:disabled {
+            background: #bdbdbd;
+            color: #eeeeee;
+            cursor: not-allowed;
+        }
+
+        .automation-status {
+            margin-top: 20px;
+            padding: 12px 15px;
+            border: 1px solid #bbdefb;
+            background: #e3f2fd;
+            color: #0d47a1;
+            border-radius: 5px;
+            font-size: 13px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #78909c;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Hospital Header -->
+    <div class="navbar">
+        <div class="hospital-name">CityCare Hospital</div>
+        <div class="subtitle">
+            Hospital Appointment Management System
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- Page Title -->
+        <div class="page-title">
+            <h1>Appointment Processing</h1>
+            <p>
+                Patient appointments awaiting automated processing
+            </p>
+        </div>
+
+        <!-- Appointment Section -->
+        <div class="section">
+
+            <div class="section-header">
+                <h2>Patient Appointments</h2>
+                <p>
+                    Appointment data is processed by the hospital automation system.
+                </p>
+            </div>
+
+            <div class="table-container">
+
+                <!-- MAIN TABLE FOR UIPATH DATA EXTRACTION -->
+                <table id="appointments-table">
+
+                    <thead>
+                        <tr>
+                            <th>PatientID</th>
+                            <th>PatientName</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Department</th>
+                            <th>Doctor</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <!-- Patient 1: Configured for live email/phone verification -->
+                        <tr data-patient-id="P1001">
+                            <td class="patient-id">P1001</td>
+                            <td>Shubham Salami Magar</td>
+                            <td>9876543210</td>
+                            <td>shubhamsalamimagar123@gmail.com</td>
+                            <td>Cardiology</td>
+                            <td>Dr. Mehta</td>
+                            <td>15/09/2026</td>
+                            <td>10:30 AM</td>
+                            <td>
+                                <span id="status-P1001" class="status pending">
+                                    Pending
+                                </span>
+                            </td>
+                            <td>
+                                <div class="actions">
+                                    <button
+                                        type="button"
+                                        class="confirm-btn"
+                                        data-action="confirm"
+                                        data-patient-id="P1001"
+                                        onclick="updateStatus('P1001', 'Confirmed')">
+                                        Confirm
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="cancel-btn"
+                                        data-action="cancel"
+                                        data-patient-id="P1001"
+                                        onclick="updateStatus('P1001', 'Cancelled')">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Patient 2 -->
+                        <tr data-patient-id="P1002">
+                            <td class="patient-id">P1002</td>
+                            <td>Ananya Singh</td>
+                            <td>9876543211</td>
+                            <td>ananya@gmail.com</td>
+                            <td>Dermatology</td>
+                            <td>Dr. Rao</td>
+                            <td>15/09/2026</td>
+                            <td>11:00 AM</td>
+                            <td>
+                                <span id="status-P1002" class="status pending">
+                                    Pending
+                                </span>
+                            </td>
+                            <td>
+                                <div class="actions">
+                                    <button
+                                        type="button"
+                                        class="confirm-btn"
+                                        data-action="confirm"
+                                        data-patient-id="P1002"
+                                        onclick="updateStatus('P1002', 'Confirmed')">
+                                        Confirm
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="cancel-btn"
+                                        data-action="cancel"
+                                        data-patient-id="P1002"
+                                        onclick="updateStatus('P1002', 'Cancelled')">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Patient 3 -->
+                        <tr data-patient-id="P1003">
+                            <td class="patient-id">P1003</td>
+                            <td>John Thomas</td>
+                            <td>9876543212</td>
+                            <td>john@gmail.com</td>
+                            <td>Neurology</td>
+                            <td>Dr. Khan</td>
+                            <td>16/09/2026</td>
+                            <td>12:30 PM</td>
+                            <td>
+                                <span id="status-P1003" class="status pending">
+                                    Pending
+                                </span>
+                            </td>
+                            <td>
+                                <div class="actions">
+                                    <button
+                                        type="button"
+                                        class="confirm-btn"
+                                        data-action="confirm"
+                                        data-patient-id="P1003"
+                                        onclick="updateStatus('P1003', 'Confirmed')">
+                                        Confirm
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="cancel-btn"
+                                        data-action="cancel"
+                                        data-patient-id="P1003"
+                                        onclick="updateStatus('P1003', 'Cancelled')">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Patient 4 - Intentional Invalid Email Test Case -->
+                        <tr data-patient-id="P1004">
+                            <td class="patient-id">P1004</td>
+                            <td>Michael Joseph</td>
+                            <td>9876543214</td>
+                            <td>michael@gmail</td>
+                            <td>Cardiology</td>
+                            <td>Dr. Mehta</td>
+                            <td>17/09/2026</td>
+                            <td>09:30 AM</td>
+                            <td>
+                                <span id="status-P1004" class="status pending">
+                                    Pending
+                                </span>
+                            </td>
+                            <td>
+                                <div class="actions">
+                                    <button
+                                        type="button"
+                                        class="confirm-btn"
+                                        data-action="confirm"
+                                        data-patient-id="P1004"
+                                        onclick="updateStatus('P1004', 'Confirmed')">
+                                        Confirm
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="cancel-btn"
+                                        data-action="cancel"
+                                        data-patient-id="P1004"
+                                        onclick="updateStatus('P1004', 'Cancelled')">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Patient 5 - Intentional Invalid Phone Test Case -->
+                        <tr data-patient-id="P1005">
+                            <td class="patient-id">P1005</td>
+                            <td>Priya Nair</td>
+                            <td>1234567890</td>
+                            <td>priya@gmail.com</td>
+                            <td>Orthopedics</td>
+                            <td>Dr. Joseph</td>
+                            <td>18/09/2026</td>
+                            <td>02:00 PM</td>
+                            <td>
+                                <span id="status-P1005" class="status pending">
+                                    Pending
+                                </span>
+                            </td>
+                            <td>
+                                <div class="actions">
+                                    <button
+                                        type="button"
+                                        class="confirm-btn"
+                                        data-action="confirm"
+                                        data-patient-id="P1005"
+                                        onclick="updateStatus('P1005', 'Confirmed')">
+                                        Confirm
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="cancel-btn"
+                                        data-action="cancel"
+                                        data-patient-id="P1005"
+                                        onclick="updateStatus('P1005', 'Cancelled')">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- App State Verification Target -->
+            <div id="automation-status" class="automation-status" role="status">
+                System Ready - Waiting for appointment processing
+            </div>
+
+        </div>
+
+        <div class="footer">
+            CityCare Hospital | Automated Appointment Processing System
+        </div>
+
+    </div>
+
+    <script>
+        function updateStatus(patientId, newStatus) {
+            const statusElement = document.getElementById("status-" + patientId);
+            const statusMessage = document.getElementById("automation-status");
+            const confirmButton = document.querySelector("[data-patient-id='" + patientId + "'][data-action='confirm']");
+            const cancelButton = document.querySelector("[data-patient-id='" + patientId + "'][data-action='cancel']");
+
+            if (!statusElement) return;
+
+            statusElement.textContent = newStatus;
+            statusElement.className = "status";
+
+            if (newStatus === "Confirmed") statusElement.classList.add("confirmed");
+            if (newStatus === "Cancelled") statusElement.classList.add("cancelled");
+
+            if (confirmButton) confirmButton.disabled = true;
+            if (cancelButton) cancelButton.disabled = true;
+
+            statusMessage.textContent = "Appointment " + patientId + " processed successfully - Status: " + newStatus;
+        }
+    </script>
+</body>
+</html>
